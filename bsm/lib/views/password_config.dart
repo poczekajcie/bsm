@@ -7,7 +7,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_hash/salt.dart';
-import 'dart:io' as io;
 import 'package:path/path.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -56,10 +55,8 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
                   await storage.write(key: 'salt', value: salt);
                   await storage.write(key: 'hash', value: hash);
 
-                  String dbFilePath = join(await getDatabasesPath(), 'safeNotesBsm.db');
-                  print(dbFilePath);
-                  if (!await io.File(dbFilePath).exists()) {
-                    await openDatabase(
+                  String dbFilePath = join(await getDatabasesPath(), 'safeNotesBsm5.db');
+                  await openDatabase(
                       dbFilePath,
                       version: 1,
                       onCreate: (Database db, int version) async {
@@ -72,10 +69,8 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
                         ''');
                       },
                     );
-                  }
 
                   await EncryptData.encryptFile(dbFilePath);
-                  await io.File(dbFilePath).delete();
 
                   Flushbar(
                     title: 'Sukces',

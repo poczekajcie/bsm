@@ -1,7 +1,26 @@
+import 'package:bsm/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return new _MainPageState();
+  }
+}
+
+class _MainPageState extends State<MainPage> {
+  bool isPasswordSet = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _checkIsPasswordSet();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +29,7 @@ class MainPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          GestureDetector(
+          !isPasswordSet ? GestureDetector(
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/password-config');
             },
@@ -24,8 +43,8 @@ class MainPage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          GestureDetector(
+          ): Container(),
+          isPasswordSet ? GestureDetector(
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/password-check');
             },
@@ -39,9 +58,16 @@ class MainPage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ): Container(),
         ],
       ),
     );
+  }
+
+  void _checkIsPasswordSet() async {
+    String hash = await storage.read(key: 'hash');
+    setState(() {
+      this.isPasswordSet = hash != null;
+    });
   }
 }
