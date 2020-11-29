@@ -1,3 +1,4 @@
+import 'package:bsm/button.dart';
 import 'package:bsm/note_arguments.dart';
 import 'package:bsm/providers/note_provider.dart';
 import 'package:flutter/material.dart';
@@ -79,11 +80,28 @@ class _NoteListState extends State<NoteList> with WidgetsBindingObserver {
           return Center(child: CircularProgressIndicator());
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, '/note', arguments: NoteRouteArguments(NoteMode.Adding, null));
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 30.0),
+              child: Button('Zamknij notatki', Colors.blue, () {
+                Navigator.of(context).pushReplacementNamed('/');
+              }),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton(
+              heroTag: "floatingBtn2",
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/note', arguments: NoteRouteArguments(NoteMode.Adding, null));
+              },
+              child: Icon(Icons.add),
+            ),
+          ),
+        ],
       ),
     );
   }
