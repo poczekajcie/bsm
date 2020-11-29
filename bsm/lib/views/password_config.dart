@@ -47,16 +47,27 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
               children: <Widget>[
                 Button('Ustaw', Colors.blue, () async {
                   final password = _passwordController.text;
-                  String salt = Salt.generateAsBase64String(32);
-                  String saltedPassword = salt + password;
-                  var bytes = utf8.encode(saltedPassword);
-                  String hash = sha256.convert(bytes).toString();
 
-                  await storage.write(key: 'salt', value: salt);
-                  await storage.write(key: 'hash', value: hash);
+                  RegExp passRegex = new RegExp(r'^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8}$');
+                  if (!passRegex.hasMatch(password)) {
+                    Flushbar(
+                      title: 'Błąd',
+                      message: 'Hasło musi mieć conajmniej 8 znaków, zawierać przynajmniej jendą wielką literę, jedną małą, jedną liczbę oraz jeden znak specjalny',
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                    )..show(context);
+                  } else {
+                    String salt = Salt.generateAsBase64String(32);
+                    String saltedPassword = salt + password;
+                    var bytes = utf8.encode(saltedPassword);
+                    String hash = sha256.convert(bytes).toString();
 
-                  String dbFilePath = join(await getDatabasesPath(), 'safeNotesBsm5.db');
-                  await openDatabase(
+                    await storage.write(key: 'salt', value: salt);
+                    await storage.write(key: 'hash', value: hash);
+
+                    String dbFilePath = join(await getDatabasesPath(), 'databaseBsm.db');
+                    await openDatabase(
                       dbFilePath,
                       version: 1,
                       onCreate: (Database db, int version) async {
@@ -70,16 +81,17 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
                       },
                     );
 
-                  await EncryptData.encryptFile(dbFilePath);
+                    await EncryptData.encryptFile(dbFilePath);
 
-                  Flushbar(
-                    title: 'Sukces',
-                    message: 'Zapisano hasło',
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 2),
-                    flushbarStyle: FlushbarStyle.FLOATING,
-                  )..show(context).then((value) =>
-                      {Navigator.of(context).pushReplacementNamed('/')});
+                    Flushbar(
+                      title: 'Sukces',
+                      message: 'Zapisano hasło',
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 2),
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                    )..show(context).then((value) =>
+                    {Navigator.of(context).pushReplacementNamed('/')});
+                  }
                 }),
                 Container(
                   height: 16.0,

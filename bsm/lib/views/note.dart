@@ -1,6 +1,7 @@
 import 'package:bsm/providers/note_provider.dart';
 import 'package:bsm/utils/button.dart';
 import 'package:bsm/utils/note_arguments.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 enum NoteMode {
@@ -92,19 +93,29 @@ class NoteState extends State<Note> with WidgetsBindingObserver {
                   final title = _titleController.text;
                   final text = _textController.text;
 
-                  if (noteMode == NoteMode.Adding) {
-                    NoteProvider.insertNote({
-                      'title': title,
-                      'text': text
-                    });
-                  } else if (noteMode == NoteMode.Editing) {
-                    NoteProvider.updateNote({
-                      'id': note['id'],
-                      'title': _titleController.text,
-                      'text': _textController.text,
-                    });
+                  if (title.length == 0 || text.length == 0) {
+                    Flushbar(
+                      title: 'Błąd',
+                      message: 'Nie można dodawać pustych notatek',
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                    )..show(context);
+                  } else {
+                    if (noteMode == NoteMode.Adding) {
+                      NoteProvider.insertNote({
+                        'title': title,
+                        'text': text
+                      });
+                    } else if (noteMode == NoteMode.Editing) {
+                      NoteProvider.updateNote({
+                        'id': note['id'],
+                        'title': _titleController.text,
+                        'text': _textController.text,
+                      });
+                    }
+                    Navigator.of(context).pushReplacementNamed('/notes');
                   }
-                  Navigator.of(context).pushReplacementNamed('/notes');
                 }),
                 Container(height: 16.0,),
                 Button('Anuluj', Colors.grey, () {
