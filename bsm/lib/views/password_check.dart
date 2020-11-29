@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:bsm/button.dart';
+import 'package:bsm/main.dart';
+import 'package:crypto/crypto.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +38,28 @@ class _PasswordCheckSate extends State<PasswordCheckPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Button('Przejdź do notatek', Colors.blue, () {
+                Button('Przejdź do notatek', Colors.blue, () async {
                   final password = _passwordController.text;
-                  //TODO: check password here
 
-                  Navigator.of(context).pushReplacementNamed('/notes');
+                  var storageSalt = await storage.read(key: 'salt');
+
+                  var saltedPassword = storageSalt + password;
+                  var bytes = utf8.encode(saltedPassword);
+                  var hash = sha256.convert(bytes).toString();
+
+                  var storageHash = await storage.read(key: 'hash');
+
+                  if (storageHash == hash) {
+                    Navigator.of(context).pushReplacementNamed('/notes');
+                  } else {
+                    Flushbar(
+                      title: 'Błąd',
+                      message: 'Podano nieprawidłowe hasło',
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                    )..show(context);
+                  }
                 }),
                 Container(
                   height: 16.0,

@@ -4,8 +4,11 @@ import 'package:bsm/views/note_list.dart';
 import 'package:bsm/views/password_check.dart';
 import 'package:bsm/views/password_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() => runApp(App());
+
+final storage = FlutterSecureStorage();
 
 class App extends StatelessWidget {
   @override
