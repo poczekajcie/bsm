@@ -32,6 +32,9 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(hintText: 'Haslo'),
+              enableSuggestions: false,
+              autocorrect: false,
+              obscureText: true,
             ),
             Container(
               height: 16.0,
