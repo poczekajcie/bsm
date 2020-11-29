@@ -1,6 +1,6 @@
-import 'package:bsm/button.dart';
-import 'package:bsm/note_arguments.dart';
 import 'package:bsm/providers/note_provider.dart';
+import 'package:bsm/utils/button.dart';
+import 'package:bsm/utils/note_arguments.dart';
 import 'package:flutter/material.dart';
 import 'note.dart';
 

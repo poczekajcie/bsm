@@ -1,12 +1,16 @@
 import 'dart:convert';
-
-import 'package:bsm/button.dart';
+import 'package:bsm/crypto/crypto.dart';
 import 'package:bsm/main.dart';
+import 'package:bsm/utils/button.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:password_hash/salt.dart';
+import 'dart:io' as io;
+import 'package:path/path.dart';
+
+import 'package:sqflite/sqflite.dart';
 
 class PasswordConfigPage extends StatefulWidget {
   @override
@@ -51,6 +55,27 @@ class _PasswordConfigSate extends State<PasswordConfigPage> {
 
                   await storage.write(key: 'salt', value: salt);
                   await storage.write(key: 'hash', value: hash);
+
+                  String dbFilePath = join(await getDatabasesPath(), 'safeNotesBsm.db');
+                  print(dbFilePath);
+                  if (!await io.File(dbFilePath).exists()) {
+                    await openDatabase(
+                      dbFilePath,
+                      version: 1,
+                      onCreate: (Database db, int version) async {
+                        db.execute('''
+                          create table Notes(
+                            id integer primary key autoincrement,
+                            title text not null,
+                            text text not null
+                          );
+                        ''');
+                      },
+                    );
+                  }
+
+                  await EncryptData.encryptFile(dbFilePath);
+                  await io.File(dbFilePath).delete();
 
                   Flushbar(
                     title: 'Sukces',
