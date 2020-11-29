@@ -1,3 +1,4 @@
+import 'package:bsm/button.dart';
 import 'package:bsm/note_arguments.dart';
 import 'package:bsm/providers/note_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,38 @@ class Note extends StatefulWidget {
   }
 }
 
-class NoteState extends State<Note> {
+class NoteState extends State<Note> with WidgetsBindingObserver {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state) {
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.resumed:
+        Navigator.of(context).pushReplacementNamed('/password-check');
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +63,7 @@ class NoteState extends State<Note> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          noteMode == NoteMode.Adding ? 'Add note' : 'Edit note'
+          noteMode == NoteMode.Adding ? 'Nowa notatka' : 'Edycja notatki'
         ),
       ),
       body: Padding(
@@ -45,21 +74,21 @@ class NoteState extends State<Note> {
             TextField(
               controller: _titleController,
               decoration: InputDecoration(
-                hintText: 'Note title'
+                hintText: 'Tytuł'
               ),
             ),
             Container(height: 8,),
             TextField(
               controller: _textController,
               decoration: InputDecoration(
-                hintText: 'Note text'
+                hintText: 'Tekst notatki'
               ),
             ),
             Container(height: 16.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                _NoteButton('Save', Colors.blue, () {
+                Button('Zapisz', Colors.blue, () {
                   final title = _titleController.text;
                   final text = _textController.text;
 
@@ -75,18 +104,18 @@ class NoteState extends State<Note> {
                       'text': _textController.text,
                     });
                   }
-                  Navigator.of(context).pushReplacementNamed('/');
+                  Navigator.of(context).pushReplacementNamed('/notes');
                 }),
                 Container(height: 16.0,),
-                _NoteButton('Discard', Colors.grey, () {
-                  Navigator.of(context).pushReplacementNamed('/');
+                Button('Anuluj', Colors.grey, () {
+                  Navigator.of(context).pushReplacementNamed('/notes');
                 }),
                 noteMode == NoteMode.Editing ?
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: _NoteButton('Delete', Colors.red, () async {
+                    child: Button('Usuń', Colors.red, () async {
                       await NoteProvider.deleteNote(note['id']);
-                      Navigator.of(context).pushReplacementNamed('/');
+                      Navigator.of(context).pushReplacementNamed('/notes');
                     }),
                   )
                  : Container()
@@ -99,26 +128,5 @@ class NoteState extends State<Note> {
   }
 }
 
-class _NoteButton extends StatelessWidget {
 
-  final String _text;
-  final Color _color;
-  final Function _onPressed;
-
-  _NoteButton(this._text, this._color, this._onPressed);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: _onPressed,
-      child: Text(
-        _text,
-        style: TextStyle(color: Colors.white),
-      ),
-      height: 40,
-      minWidth: 100,
-      color: _color,
-    );
-  }
-}
 

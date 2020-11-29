@@ -1,25 +1,51 @@
 import 'package:bsm/note_arguments.dart';
 import 'package:bsm/providers/note_provider.dart';
 import 'package:flutter/material.dart';
-
 import 'note.dart';
-
 
 class NoteList extends StatefulWidget {
 
   @override
-  NoteListState createState() {
-    return new NoteListState();
+  State<StatefulWidget> createState() {
+    return new _NoteListState();
   }
 }
 
-class NoteListState extends State<NoteList> {
+class _NoteListState extends State<NoteList> with WidgetsBindingObserver {
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state) {
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.resumed:
+        Navigator.of(context).pushReplacementNamed('/password-check');
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notes'),
+        title: Text('Lista notatek'),
       ),
       body: FutureBuilder(
         future: NoteProvider.getNoteList(),
