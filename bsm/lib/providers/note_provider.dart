@@ -9,7 +9,7 @@ class NoteProvider {
 
     db = await openDatabase(
         await EncryptData.decryptFile(
-            join(await getDatabasesPath(), 'databaseBsm.db.aes')),
+            join(await getDatabasesPath(), 'dbBsm3.db.aes')),
         version: 1, onCreate: (Database db, int version) async {
       db.execute('''
           create table Notes(

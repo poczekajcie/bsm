@@ -40,7 +40,7 @@ class NoteState extends State<Note> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         break;
       case AppLifecycleState.resumed:
-        Navigator.of(context).pushReplacementNamed('/password-check');
+        Navigator.of(context).pushReplacementNamed('/biometry-check');
         break;
       case AppLifecycleState.inactive:
         break;

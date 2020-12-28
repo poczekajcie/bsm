@@ -1,8 +1,7 @@
+import 'package:bsm/views/biometry_check.dart';
 import 'package:bsm/views/main_page.dart';
 import 'package:bsm/views/note.dart';
 import 'package:bsm/views/note_list.dart';
-import 'package:bsm/views/password_check.dart';
-import 'package:bsm/views/password_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -20,8 +19,7 @@ class App extends StatelessWidget {
         '/': (_) => MainPage(),
         '/notes': (_) => NoteList(),
         '/note': (context) => Note(),
-        '/password-config': (_) => PasswordConfigPage(),
-        '/password-check': (_) => PasswordCheckPage(),
+        '/biometry-check': (_) => BiometryCheckPage(),
       },
     );
   }

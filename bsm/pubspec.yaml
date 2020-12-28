@@ -27,6 +27,7 @@ dependencies:
   crypto: ^2.1.5
   password_hash: ^2.0.0
   flushbar: ^1.10.4
+  local_auth: ^0.6.3+4
   flutter:
     sdk: flutter
 
